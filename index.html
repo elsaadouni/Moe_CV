@@ -1634,6 +1634,89 @@
 </div>
 </div>
 
+
+
+
+<section id="contact" style="padding: 2em 0; color: #fff;">
+  <div class="container" style="max-width: 600px; margin: 0 auto;">
+    <h2 style="text-align: center; margin-bottom: 1em;">Contact Us</h2>
+    <form id="contact-form" action="https://formspree.io/f/xdknzaaj" method="POST" style="display: flex; flex-direction: column;">
+      <div style="margin-bottom: 1em;">
+        <label for="name" style="display: block; margin-bottom: 0.5em;">Name:</label>
+        <input type="text" id="name" name="name" required style="width: 100%; padding: 0.5em; border: 1px solid #ccc; border-radius: 5px; background-color: #333; color: #fff;">
+      </div>
+      <div style="margin-bottom: 1em;">
+        <label for="email" style="display: block; margin-bottom: 0.5em;">Email:</label>
+        <input type="email" id="email" name="email" required style="width: 100%; padding: 0.5em; border: 1px solid #ccc; border-radius: 5px; background-color: #333; color: #fff;">
+      </div>
+      <div style="margin-bottom: 1em;">
+        <label for="subject" style="display: block; margin-bottom: 0.5em;">Subject:</label>
+        <input type="text" id="subject" name="subject" required style="width: 100%; padding: 0.5em; border: 1px solid #ccc; border-radius: 5px; background-color: #333; color: #fff;">
+      </div>
+      <div style="margin-bottom: 1em;">
+        <label for="message" style="display: block; margin-bottom: 0.5em;">Message:</label>
+        <textarea id="message" name="message" rows="5" required style="width: 100%; padding: 0.5em; border: 1px solid #ccc; border-radius: 5px; background-color: #333; color: #fff;"></textarea>
+      </div>
+      <div style="margin-bottom: 1em;">
+        <div class="g-recaptcha" data-sitekey="6Le8HLInAAAAAGFrVPBp62lXBqZ-4ld_PJqw2mmF"></div>
+      </div>
+      <div>
+        <button type="submit" style="padding: 0.5em 1em; border: none; border-radius: 5px; background-color: #007bff; color: #fff; cursor: pointer;">Send</button>
+      </div>
+    </form>
+    <div id="form-response" style="display:none; text-align: center; margin-top: 1em;"></div>
+  </div>
+
+  <!-- Include the reCAPTCHA API script -->
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+  <!-- Inline JavaScript -->
+  <script>
+    document.querySelector('#contact-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const formData = new FormData(this);
+      const formResponse = document.getElementById('form-response');
+      formResponse.style.display = 'none';
+
+      const recaptchaResponse = document.querySelector('#g-recaptcha-response').value;
+      formData.append('g-recaptcha-response', recaptchaResponse);
+      
+      fetch(this.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Accept': 'application/json'
+        }
+      }).then(response => {
+        if (response.ok) {
+          formResponse.innerHTML = 'Thank you for your message!';
+          formResponse.style.color = 'green';
+          formResponse.style.display = 'block';
+          this.reset();
+          grecaptcha.reset(); // Reset reCAPTCHA
+        } else {
+          response.json().then(data => {
+            if (Object.prototype.hasOwnProperty.call(data, 'errors')) {
+              formResponse.innerHTML = data["errors"].map(error => error["message"]).join(", ");
+            } else {
+              formResponse.innerHTML = 'Oops! There was a problem submitting your form';
+            }
+            formResponse.style.color = 'red';
+            formResponse.style.display = 'block';
+          });
+        }
+      }).catch(error => {
+        formResponse.innerHTML = 'Oops! There was a problem submitting your form';
+        formResponse.style.color = 'red';
+        formResponse.style.display = 'block';
+      });
+    });
+  </script>
+</section>
+
+
+
+
  <article id="post-187" class="post-187 page type-page status-publish hentry">
                   <div class="entry-content">
                     <div class="fw-page-builder-content">
