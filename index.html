@@ -38,6 +38,34 @@
       background: none !important;
       padding: 0 !important;
       }
+        .marquee {
+          width: 100%;
+          overflow: hidden;
+          white-space: nowrap;
+          box-sizing: border-box;
+          background: #111;
+          color: #0f0;
+          font-family: monospace;
+          border-bottom: 1px solid #0f0;
+          padding: 5px 0;
+          z-index: 9999;
+          position: relative;
+        }
+
+        .marquee span {
+          display: inline-block;
+          padding-left: 100%;
+          animation: scroll-left 30s linear infinite;
+        }
+
+        @keyframes scroll-left {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-100%);
+          }
+        }
     </style>
     <link rel='stylesheet' id='wp-block-library-css' href='./assets/style/style.min-ver=6.4.5.css'
       type='text/css' media='all' />
@@ -904,6 +932,9 @@
   <body data-rsssl=1
     class="home page-template-default page page-id-157 wp-embed-responsive masthead-fixed full-width grid">
     <div class="lm-animated-bg"></div>
+        <div class="marquee">
+        <span>🚀 Initializing coffee protocol... ☕ Connected to espresso port 443... 🛰️ Launching shell into hyperspace... 👾 Found 42 bugs, named them pets... 🧙‍♂️ Casting sudo spells... 🔐 Encrypting with friendship... 🦾 System uptime: longer than your last relationship... 🌌 Welcome to elsaadouni.com, where packets go to meditate.</span>
+        </div>
     <!-- Loading animation -->
     <div class="preloader">
       <div class="preloader-animation">
