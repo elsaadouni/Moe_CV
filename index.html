@@ -160,43 +160,54 @@
             transition: opacity 0.5s ease;
         }
 
+        /* PRELOADER FIX - Replace existing preloader styles with these */
         .preloader-text {
             font-family: var(--font-display);
-            font-size: clamp(1.5rem, 6vw, 2.5rem);
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
             font-weight: 700;
             display: flex;
             gap: 0.05em;
             margin-bottom: 1rem;
-            flex-wrap: wrap;
+            flex-wrap: nowrap; /* Prevent wrapping */
             justify-content: center;
             max-width: 100%;
             line-height: 1.2;
+            white-space: nowrap; /* Keep on one line */
+            overflow: hidden;
         }
 
         .fly-letter {
             display: inline-block;
             opacity: 0;
             transform: translateZ(-500px) rotateX(90deg) rotateY(45deg);
-            animation: flyIn3D 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+            animation: flyIn3D 2s cubic-bezier(0.23, 1, 0.32, 1) forwards; /* SLOWER: 2s instead of 1.2s */
             background: var(--gradient-intro);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             filter: drop-shadow(0 0 20px rgba(234, 88, 12, 0.4));
+            min-width: 0.3em; /* Ensure space character shows */
         }
 
+        /* SLOWER delays (0.15s apart instead of 0.05s) */
         .fly-letter:nth-child(1) { animation-delay: 0.1s; }
-        .fly-letter:nth-child(2) { animation-delay: 0.15s; }
-        .fly-letter:nth-child(3) { animation-delay: 0.2s; }
-        .fly-letter:nth-child(4) { animation-delay: 0.25s; }
-        .fly-letter:nth-child(5) { animation-delay: 0.3s; }
-        .fly-letter:nth-child(6) { animation-delay: 0.35s; }
-        .fly-letter:nth-child(7) { animation-delay: 0.4s; }
-        .fly-letter:nth-child(8) { animation-delay: 0.45s; }
-        .fly-letter:nth-child(9) { animation-delay: 0.5s; }
-        .fly-letter:nth-child(10) { animation-delay: 0.55s; }
-        .fly-letter:nth-child(11) { animation-delay: 0.6s; }
-        .fly-letter:nth-child(12) { animation-delay: 0.65s; }
+        .fly-letter:nth-child(2) { animation-delay: 0.25s; }
+        .fly-letter:nth-child(3) { animation-delay: 0.4s; }
+        .fly-letter:nth-child(4) { animation-delay: 0.55s; }
+        .fly-letter:nth-child(5) { animation-delay: 0.7s; }
+        .fly-letter:nth-child(6) { animation-delay: 0.85s; }
+        .fly-letter:nth-child(7) { animation-delay: 1.0s; }
+        .fly-letter:nth-child(8) { animation-delay: 1.15s; } /* Space */
+        .fly-letter:nth-child(9) { animation-delay: 1.3s; }
+        .fly-letter:nth-child(10) { animation-delay: 1.45s; }
+        .fly-letter:nth-child(11) { animation-delay: 1.6s; }
+        .fly-letter:nth-child(12) { animation-delay: 1.75s; }
+        .fly-letter:nth-child(13) { animation-delay: 1.9s; }
+        .fly-letter:nth-child(14) { animation-delay: 2.05s; }
+        .fly-letter:nth-child(15) { animation-delay: 2.2s; }
+        .fly-letter:nth-child(16) { animation-delay: 2.35s; }
+        .fly-letter:nth-child(17) { animation-delay: 2.5s; } /* N - was missing */
+        .fly-letter:nth-child(18) { animation-delay: 2.65s; } /* I - was missing */
 
         @keyframes flyIn3D {
             0% {
@@ -210,6 +221,17 @@
                 filter: blur(0);
             }
         }
+
+        /* Increase loader bar time to match */
+        .loader-progress {
+            height: 100%;
+            background: var(--gradient-intro);
+            width: 0;
+            animation: loadProgress 3s ease-in-out 1s forwards; /* 3s instead of 2s */
+            box-shadow: 0 0 20px var(--intro-orange);
+        }   
+
+    
 
         .preloader-subtitle {
             font-size: clamp(0.75rem, 2.5vw, 0.9rem);
@@ -233,13 +255,6 @@
             position: relative;
         }
 
-        .loader-progress {
-            height: 100%;
-            background: var(--gradient-intro);
-            width: 0;
-            animation: loadProgress 1.5s ease-in-out 1s forwards;
-            box-shadow: 0 0 15px var(--intro-orange);
-        }
 
         @keyframes loadProgress {
             0% { width: 0%; }
