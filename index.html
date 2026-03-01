@@ -2385,29 +2385,43 @@
             <form class="contact-form" id="contactForm">
             <!-- honeypot -->
             <input type="text" name="website" id="website" autocomplete="off"
-                    style="position:absolute; left:-9999px; height:0; width:0;" tabindex="-1">
-
+                   style="position:absolute; left:-9999px; height:0; width:0;" tabindex="-1">
+          
             <div class="form-group">
-                <label>Name</label>
-                <input type="text" name="name" id="name" placeholder="Your name" required>
+              <label>Name</label>
+              <input type="text" name="name" id="name" placeholder="Your name" required>
             </div>
-
+          
             <div class="form-group">
-                <label>Email</label>
-                <input type="email" name="email" id="email" placeholder="your@email.com" required>
+              <label>Email</label>
+              <input type="email" name="email" id="email" placeholder="ask@elsaadouni.com" required>
             </div>
-
+          
             <div class="form-group">
-                <label>Message</label>
-                <textarea rows="4" name="message" id="message" placeholder="Tell me about your project..." required></textarea>
+              <label>Message</label>
+              <textarea rows="4" name="message" id="message" placeholder="Tell me about your project..." required></textarea>
             </div>
-
+          
+            <!-- Turnstile token holder (we fill it via callback) -->
+            <input type="hidden" name="cf-turnstile-response" id="tsToken" value="">
+          
+            <!-- Turnstile widget (THIS is the visible captcha area) -->
+            <div style="margin: 12px 0;">
+              <div class="cf-turnstile"
+                   data-sitekey="0x4AAAAAACkZFZIqRTJvAuJ-"
+                   data-callback="onTurnstile"
+                   data-expired-callback="onTurnstileExpired"
+                   data-error-callback="onTurnstileError"></div>
+            </div>
+          
             <button type="submit" class="btn btn-primary" id="sendBtn" style="width: 100%; justify-content: center;">
-                <i class="fas fa-paper-plane"></i> <span id="sendBtnText">Send Message</span>
+              <i class="fas fa-paper-plane"></i> <span id="sendBtnText">Send Message</span>
             </button>
-
+          
             <p id="contactStatus" style="margin-top:12px; display:none;"></p>
-            </form>
+          </form>
+
+              
             </div>
         </div>
     </section>
@@ -2570,17 +2584,29 @@
         (() => {
 
         const WEBHOOK_URL = "https://n8n.elsaadouni.com/webhook/yas-contacts";
-        const WEBHOOK_TOKEN = "Mj1msc_6SVu12tPqCxvPka_AbC5tkSLZU5yIbPUs3Oc";
+        const WEBHOOK_SECRET = "Mj1msc_6SVu12tPqCxvPka_AbC5tkSLZU5yIbPUs3Oc"; // must match EXPECTED_SECRET in n8n
         
         const form = document.getElementById("contactForm");
         const btn = document.getElementById("sendBtn");
         const btnText = document.getElementById("sendBtnText");
         const statusEl = document.getElementById("contactStatus");
         
-        const showStatus = (msg, ok=true) => {
+        function showStatus(msg, ok = true) {
           statusEl.style.display = "block";
           statusEl.textContent = msg;
           statusEl.style.color = ok ? "#0a7a2f" : "#b00020";
+        }
+        
+        // Make Turnstile callbacks GLOBAL so the widget can call them
+        window.onTurnstile = (token) => {
+          document.getElementById("tsToken").value = token || "";
+        };
+        window.onTurnstileExpired = () => {
+          document.getElementById("tsToken").value = "";
+        };
+        window.onTurnstileError = (err) => {
+          document.getElementById("tsToken").value = "";
+          console.error("Turnstile error:", err);
         };
         
         form.addEventListener("submit", async (e) => {
@@ -2592,18 +2618,28 @@
           const name = (document.getElementById("name").value || "").trim();
           const email = (document.getElementById("email").value || "").trim();
           const message = (document.getElementById("message").value || "").trim();
+          const tsToken = (document.getElementById("tsToken").value || "").trim();
+        
+          // If you're using Turnstile in n8n, require token here
+          if (!tsToken) {
+            showStatus("Please complete the captcha first.", false);
+            return;
+          }
         
           btn.disabled = true;
           btnText.textContent = "Sending...";
         
           try {
             const params = new URLSearchParams();
-            params.set("secret", WEBHOOK_TOKEN);          // ✅ changed
+            params.set("secret", WEBHOOK_SECRET); // ✅ shared secret for n8n
             params.set("name", name);
             params.set("email", email);
             params.set("message", message);
             params.set("page", window.location.href);
             params.set("website", hp);
+        
+            // ✅ send Turnstile token so n8n can verify it
+            params.set("cf-turnstile-response", tsToken);
         
             const res = await fetch(WEBHOOK_URL, {
               method: "POST",
@@ -2612,8 +2648,7 @@
             });
         
             const text = await res.text();
-            let parsed;
-            try { parsed = JSON.parse(text); } catch { parsed = text; }
+            let parsed; try { parsed = JSON.parse(text); } catch { parsed = text; }
         
             if (!res.ok) {
               console.error("Webhook error:", res.status, parsed);
@@ -2622,6 +2657,8 @@
         
             showStatus("Thanks for your message — I’ll get back to you soon.", true);
             form.reset();
+            document.getElementById("tsToken").value = "";
+            if (window.turnstile) turnstile.reset(); // reset widget for next submit
           } catch (err) {
             console.error("Contact submit failed:", err);
             showStatus("Could not send. Please try again.", false);
@@ -2629,7 +2666,8 @@
             btn.disabled = false;
             btnText.textContent = "Send Message";
           }
-        });
+        });          
+        
         })();
 
     </script>
