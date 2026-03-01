@@ -2569,67 +2569,67 @@
 
         (() => {
 
-          const WEBHOOK_URL = "https://n8n.elsaadouni.com/webhook/yas-contacts";
-const WEBHOOK_TOKEN = "PUT_THE_SAME_VALUE_AS_EXPECTED_SECRET_IN_N8N";
-
-const form = document.getElementById("contactForm");
-const btn = document.getElementById("sendBtn");
-const btnText = document.getElementById("sendBtnText");
-const statusEl = document.getElementById("contactStatus");
-
-const showStatus = (msg, ok=true) => {
-  statusEl.style.display = "block";
-  statusEl.textContent = msg;
-  statusEl.style.color = ok ? "#0a7a2f" : "#b00020";
-};
-
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const hp = (document.getElementById("website").value || "").trim();
-  if (hp) return; // bot filled honeypot
-
-  const name = (document.getElementById("name").value || "").trim();
-  const email = (document.getElementById("email").value || "").trim();
-  const message = (document.getElementById("message").value || "").trim();
-
-  btn.disabled = true;
-  btnText.textContent = "Sending...";
-
-  try {
-    const params = new URLSearchParams();
-    params.set("secret", WEBHOOK_TOKEN);          // ✅ changed
-    params.set("name", name);
-    params.set("email", email);
-    params.set("message", message);
-    params.set("page", window.location.href);
-    params.set("website", hp);
-
-    const res = await fetch(WEBHOOK_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: params.toString(),
-    });
-
-    const text = await res.text();
-    let parsed;
-    try { parsed = JSON.parse(text); } catch { parsed = text; }
-
-    if (!res.ok) {
-      console.error("Webhook error:", res.status, parsed);
-      throw new Error("HTTP " + res.status);
-    }
-
-    showStatus("Thanks for your message — I’ll get back to you soon.", true);
-    form.reset();
-  } catch (err) {
-    console.error("Contact submit failed:", err);
-    showStatus("Could not send. Please try again.", false);
-  } finally {
-    btn.disabled = false;
-    btnText.textContent = "Send Message";
-  }
-});
+        const WEBHOOK_URL = "https://n8n.elsaadouni.com/webhook/yas-contacts";
+        const WEBHOOK_TOKEN = "Mj1msc_6SVu12tPqCxvPka_AbC5tkSLZU5yIbPUs3Oc";
+        
+        const form = document.getElementById("contactForm");
+        const btn = document.getElementById("sendBtn");
+        const btnText = document.getElementById("sendBtnText");
+        const statusEl = document.getElementById("contactStatus");
+        
+        const showStatus = (msg, ok=true) => {
+          statusEl.style.display = "block";
+          statusEl.textContent = msg;
+          statusEl.style.color = ok ? "#0a7a2f" : "#b00020";
+        };
+        
+        form.addEventListener("submit", async (e) => {
+          e.preventDefault();
+        
+          const hp = (document.getElementById("website").value || "").trim();
+          if (hp) return; // bot filled honeypot
+        
+          const name = (document.getElementById("name").value || "").trim();
+          const email = (document.getElementById("email").value || "").trim();
+          const message = (document.getElementById("message").value || "").trim();
+        
+          btn.disabled = true;
+          btnText.textContent = "Sending...";
+        
+          try {
+            const params = new URLSearchParams();
+            params.set("secret", WEBHOOK_TOKEN);          // ✅ changed
+            params.set("name", name);
+            params.set("email", email);
+            params.set("message", message);
+            params.set("page", window.location.href);
+            params.set("website", hp);
+        
+            const res = await fetch(WEBHOOK_URL, {
+              method: "POST",
+              headers: { "Content-Type": "application/x-www-form-urlencoded" },
+              body: params.toString(),
+            });
+        
+            const text = await res.text();
+            let parsed;
+            try { parsed = JSON.parse(text); } catch { parsed = text; }
+        
+            if (!res.ok) {
+              console.error("Webhook error:", res.status, parsed);
+              throw new Error("HTTP " + res.status);
+            }
+        
+            showStatus("Thanks for your message — I’ll get back to you soon.", true);
+            form.reset();
+          } catch (err) {
+            console.error("Contact submit failed:", err);
+            showStatus("Could not send. Please try again.", false);
+          } finally {
+            btn.disabled = false;
+            btnText.textContent = "Send Message";
+          }
+        });
         })();
 
     </script>
